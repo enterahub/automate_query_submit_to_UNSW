@@ -1,0 +1,17 @@
+University of New South Wales(UNSW) enquiry form drafted at 2024-05-05 21:26:12.816759
+
+Personal email                             : Example@example.com
+Applicant first name                       : Nethra
+Applicant last name                        : Morgan
+Birthday                                   : Apr/11/2002
+Student number                             : 1234567
+Application number                         : 12345678
+Residency                                  : Philippines
+Citizenship                                : Netherlands
+Term of admission                          : Term 3 2024 (september)
+Degree/programme(checking with the website): 3784 - commerce/computer science
+Faculty                                    : Business school
+Enquiry content                            : Input your enquiry here
+Application status                         : Conditional offer letter received
+
+Form is Brought By Alex Lee™, alexlee7172@gmail.com.
