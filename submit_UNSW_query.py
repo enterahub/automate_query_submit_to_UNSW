@@ -1,5 +1,5 @@
 """
-A project that helps  current/prospective students of the University of New South Wales to submit their queries to the helping center.
+A project that helps current/prospective students of the University of New South Wales to submit their queries to the helping center.
 Let us make life easier!!!
 
 Make sure to change personal information to your own in "Enquiry" class and input your enquiry at the beginning of this Python file.
