@@ -1,5 +1,5 @@
 """
-A project that helps current/prospective students of the University of New South Wales to submit their queries to the helping center.
+A project that helps  current/prospective students of the University of New South Wales to submit their queries to the helping center.
 Let us make life easier!!!
 
 Make sure to change personal information to your own in "Enquiry" class and input your enquiry at the beginning of this Python file.
@@ -26,61 +26,102 @@ This project is my IBDP CAS project, and it is FREE of using and copying.
 __author__ = "Alex Lee"
 __author_email__ = "alexlee7172@gmail.com"
 
+
+
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 
+import sys
 from time import sleep
 from datetime import datetime
-import sys
+from os import listdir
 
 UNSW_enquiry_url = "http://www.enquiry.unsw.edu.au/"
 today = datetime.now()
 
-# ***Input your enquiry here:
-enquiry_content = "Input your enquiry here"
+# ***Input your enquiry in the corresponding file:
+enquiry_file = "query.txt"
+if enquiry_file in listdir():
+    enquiry_content = open(enquiry_file, "rt").read()
+    if enquiry_content != "":
+        pass
+    else:
+        print("Please write your enquiry in the file created and execute the programme again.")
+        sys.exit()
+else:
+    with open(enquiry_file, "w+"):
+        print("Please write your enquiry in the file created and execute the programme again.")
+        sys.exit()
 
 
 class Enquiry:
     # Personal Info. Compulsory for filling in the form.
     personal_email = "example@example.com"
-    applicant_first_name = "Nethra"
-    applicant_last_name = "Morgan"
-    birth_month, birth_date, birth_year = "Apr 11 2002".split(" ")  # Must be in this format
+    applicant_first_name = "Alex"
+    applicant_last_name = "Lee"
+    birth_month, birth_date, birth_year = "Apr 13 2008".split(" ")  # Must in this format, NB: use abbr form of the month
     student_no: str = "1234567"
     application_no: str = "12345678"
 
     # Strictly Refer to the Website
-    country_of_citizenship = "Netherlands"
+    country_of_citizenship = "Netherland"
     country_of_residence = "Philippines"
     term_of_admission = "Term 3 2024 (September)"
     faculty_of_study = "Business School"
     degree_or_programme = "3784 - Commerce/Computer Science"
 
-    # Only uncomment ONE of the statuses as your application status.
-    status_of_application = [
-        # "Application submitted - no correspondence received yet",
-        # "Acknowledgement Letter received",
-        # "Application on Hold Letter received",
-        "Conditional Offer Letter received",
-        # "Conditional Package Offer received",
-        # "Offer Letter received",
-        # "Deny Letter received",
-        # "Offer Accepted",
-        # "Deferment Requested",
-        # "Deferment Confirmation received"
-    ]
-
     def __init__(self):
-        self.enquiry_form_info = self.check_info()
 
-    def check_info(self):
+        # Only uncomment ONE of the statuses as your study status.
+        self.study_status: dict[str, By.XPATH] = {
+            "Undergraduate": """//*[@id="decision-tree-form"]/div[2]/div[1]/div/div[1]/div[1]/label/a""",
+            # "Honours": """//*[@id="decision-tree-form"]/div[2]/div[1]/div/div[2]/div[1]/label/a""",
+            # "Postgraduate": """//*[@id="decision-tree-form"]/div[2]/div[1]/div/div[6]/div[1]/label/a""",
+            # "Student Postgraduate(Online)": """//*[@id="decision-tree-form"]/div[2]/div[1]/div/div[7]/div[1]/label/a"""
+        }
+
+        # Only uncomment ONE of the statuses as your residential status.
+        # !!! Needs amendment of code if selecting "domestic", Please amend if you deems necessary.
+        self.residential_status = {
+            # "Domestic": """//*[@id="conditional-menu-student"]/div[1]/div[1]/label/a""",
+            "International": """//*[@id="conditional-menu-student"]/div[2]/div[1]/label/a"""
+        }
+
+        # Only uncomment ONE of the statuses as your application status.
+        self.status_of_application = [
+            # "Application submitted - no correspondence received yet",
+            # "Acknowledgement Letter received",
+            # "Application on Hold Letter received",
+            "Conditional Offer Letter received",
+            # "Conditional Package Offer received",
+            # "Offer Letter received",
+            # "Deny Letter received",
+            # "Offer Accepted",
+            # "Deferment Requested",
+            # "Deferment Confirmation received"
+        ]
+
+        if len(self.status_of_application) != 1 or len(self.residential_status) != 1 or len(self.study_status) != 1:
+            print("Each dictionary should have exactly one key-value pair. Please check carefully.")
+            sys.exit()
+
+        # Choose Prospective Students as Status Will be Directed to Other Places.
+        self.applicant_status = "Current Applicant"
+        self.enquiry_form_info = self.review_personal_info()
+
+    def review_personal_info(self):
+
         personal_info_dict = dict()
 
         personal_info_dict["personal email"] = self.personal_email
         personal_info_dict["applicant first name"] = self.applicant_first_name.capitalize()
         personal_info_dict["applicant last name"] = self.applicant_last_name.capitalize()
+        personal_info_dict["residential status"] = list(self.residential_status.keys())[0]
+        personal_info_dict["study status"] = list(self.study_status.keys())[0]
+        personal_info_dict["application status"] = self.status_of_application[0]
+        personal_info_dict["applicant status"] = self.applicant_status
         personal_info_dict["birthday"] = "/".join([self.birth_month, self.birth_date, self.birth_year])
         personal_info_dict["student number"] = self.student_no
         personal_info_dict["application number"] = self.application_no
@@ -89,12 +130,6 @@ class Enquiry:
         personal_info_dict["term of admission"] = self.term_of_admission
         personal_info_dict["degree/programme(checking with the website)"] = self.degree_or_programme
         personal_info_dict["faculty"] = self.faculty_of_study
-        
-        if len(self.status_of_application) == 1:
-            personal_info_dict["application status"] = self.status_of_application[0]
-        else:
-            raise KeyError("Inappropriate application status, please check.")
-
         personal_info_dict["enquiry content"] = enquiry_content
 
         return align_text(personal_info_dict)
@@ -106,19 +141,17 @@ class Enquiry:
         driver = Chrome(options=option)
         driver.get(UNSW_enquiry_url)
 
-        undergraduate_button = driver.find_element(by=By.XPATH,
-                                                   value="""//*[@id="decision-tree-form"]/div[2]/div[1]/div/div[1]/div[1]/label/a""")
-        undergraduate_button.click()
+        study_status_button = driver.find_element(by=By.XPATH, value=list(self.study_status.values())[0])
+        study_status_button.click()
         sleep(0.5)
 
-        international_button = driver.find_element(by=By.XPATH,
-                                                   value="""//*[@id="conditional-menu-student"]/div[2]/div[1]/label/a""")
-        international_button.click()
+        residential_status_button = driver.find_element(by=By.XPATH, value=list(self.residential_status.values())[0])
+        residential_status_button.click()
         sleep(0.5)
 
-        current_applicant_button = driver.find_element(by=By.XPATH,
-                                                       value="""//*[@id="conditional-menu-prospective-current-intl"]/div[2]/div[1]/label/a""")
-        current_applicant_button.click()
+        applicant_status_button = driver.find_element(by=By.XPATH,
+                                                      value="""//*[@id="conditional-menu-prospective-current-intl"]/div[2]/div[1]/label/a""")
+        applicant_status_button.click()
 
         # Enter into the Query Form
         application_method_dropdown = Select(
@@ -186,7 +219,7 @@ class Enquiry:
         enquiry_enter_fill.send_keys(enquiry_content)
 
         submit_button = driver.find_element(value="enquiryForm_save")
-        if input("Are you sure to submit the enquiry form(Yes or No): ").capitalize() == "Yes":
+        if input("Are you sure to submit the enquiry form(Y): ").capitalize() == "Y":
             submit_button.click()  # Uncomment when you want to submit the form
             sleep(1)
             print("Done your submission! Next, patiently wait for the replies.")
@@ -208,7 +241,7 @@ class Enquiry:
             f.write(f"\nForm is Brought By {__author__}™, {__author_email__}.")
 
 
-def align_text(dict_of_text: dict):
+def align_text(dict_of_text: dict[str, str]):
     """
     input: {str1, str2}
     output: str1 : str2
@@ -220,7 +253,8 @@ def align_text(dict_of_text: dict):
     After using:
     ABC  : This is the first line.
     ABCDE: This is the second line.
-    :return:
+
+    :return: content of aligned text
     """
     if not isinstance(dict_of_text, dict):
         raise TypeError("Not a dictionary")
@@ -232,17 +266,26 @@ def align_text(dict_of_text: dict):
 
     content_printed = ""
     for lhs in dict_of_text:
-        content_printed += lhs.capitalize() + " " * (max_lhs_len - len(lhs)) + ": " + dict_of_text[lhs].capitalize() + "\n"
+        if "\n" not in dict_of_text[lhs]:
+            indent_spaces = max_lhs_len - len(lhs)
+            content_printed += lhs.capitalize() + " " * indent_spaces + ": " + dict_of_text[lhs] + "\n"
+        else:
+            lines = dict_of_text[lhs].split("\n")
+            line_indent: int = int(0.5 * max_lhs_len)
+            printed_lines = "".join([" " * line_indent + f"{line}" + "\n" for line in lines])
+            content_printed += lhs.capitalize() + " " * (max_lhs_len - len(lhs)) + ":" + "\n" + printed_lines
 
     return content_printed
 
 
 def main():
     enquiry = Enquiry()
-    print(enquiry.check_info())
-    if input("Proceed?(Y or N): ").capitalize() == "Y":
+    print(enquiry.review_personal_info())
+    if input("Proceed?(Y): ").upper() == "Y":
+        print("Processing...")
         if_submitted: bool = enquiry.send_enquiry_form()
         enquiry.archive_enquiry_form(if_submitted)
+        print("Done")
     else:
         sys.exit()
 
