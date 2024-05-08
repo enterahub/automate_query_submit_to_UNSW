@@ -11,7 +11,7 @@ applicant_last_name = "Lee"
 birth_month, birth_date, birth_year = "Apr 13 2008".split(" ")  # Must in this format, NB: use abbr form of the month
 student_no: str = "1234567"
 application_no: str = "12345678"
-country_of_citizenship = "Netherland"
+country_of_citizenship = "Netherlands"
 country_of_residence = "Philippines"
 term_of_admission = "Term 3 2024 (September)"
 faculty_of_study = "Business School"
@@ -25,8 +25,6 @@ This project is my IBDP CAS project, and it is FREE of using and copying.
 
 __author__ = "Alex Lee"
 __author_email__ = "alexlee7172@gmail.com"
-
-
 
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
@@ -61,12 +59,13 @@ class Enquiry:
     personal_email = "example@example.com"
     applicant_first_name = "Alex"
     applicant_last_name = "Lee"
-    birth_month, birth_date, birth_year = "Apr 13 2008".split(" ")  # Must in this format, NB: use abbr form of the month
+    birth_month, birth_date, birth_year = "Apr 13 2008".split(
+        " ")  # Must in this format, NB: use abbr form of the month
     student_no: str = "1234567"
     application_no: str = "12345678"
 
     # Strictly Refer to the Website
-    country_of_citizenship = "Netherland"
+    country_of_citizenship = "Netherlands"
     country_of_residence = "Philippines"
     term_of_admission = "Term 3 2024 (September)"
     faculty_of_study = "Business School"
